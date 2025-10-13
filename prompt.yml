@@ -1,0 +1,25 @@
+qa_test_case_prompt: |
+  You are a QA Test Case Generator.
+  For each requirement below, generate detailed test cases.
+
+  Requirements:
+  ${requirements_text}
+
+  Format your output as a single JSON array. Each object in the array should represent a requirement and have the following structure:
+  Let the steps be detailed and numbered.
+  [
+    {
+      "test_cases": [
+        {
+          "id": "number",
+          "steps": ["string", "string"],
+          "expected_result": "string"
+        }
+      ]
+    }
+  ]
+  Do not include explanations, markdown, or extra text.
+
+  Give all possible test cases, including positive, negative, and edge cases.
+  Do not include any text before or after the JSON.
+  Ensure the JSON is properly formatted and valid.

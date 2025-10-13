@@ -1,0 +1,10 @@
+beautifulsoup4
+chromadb
+numpy
+openpyxl
+ollama
+pandas
+requests
+sentence-transformers
+torch
+python-dotenv
