@@ -74,5 +74,5 @@ python3 main.py
 
 ```
 
-## Happy coding ##
+## Happy coding 😄 ##
 
