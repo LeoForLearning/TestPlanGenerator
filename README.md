@@ -74,5 +74,21 @@ python3 main.py
 
 ```
 
+## How to run Frontend app?.
+
+# 🚀 Running the Frontend Application 
+
+Run the following commands one by one: 
+
+```bash
+
+cd frontend
+
+npm install
+
+npm eun dev
+
+```
+
 ## Happy coding 😄 ##
 
