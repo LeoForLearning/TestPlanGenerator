@@ -34,7 +34,7 @@ async def clear_settings():
 
 
 # -------------------------
-# 🔁 RAG Actions
+# RAG Actions
 # -------------------------
 
 @router.post("/reindex")

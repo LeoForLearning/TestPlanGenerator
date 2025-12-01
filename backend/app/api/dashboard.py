@@ -16,7 +16,7 @@ async def get_dashboard_status():
     - test generation history
     """
 
-    # 🔧 For now: mock data
+    # For now: mock data
     response = {
         "connectedTool": "Azure DevOps",     # or "JIRA" or None
         "storedDocuments": 46,
