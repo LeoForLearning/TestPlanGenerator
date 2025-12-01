@@ -7,7 +7,7 @@ import { connectionsApi } from "../services/connectionsApi";
 const ConnectionsPage = () => {
   usePageTitle("Connections");
 
-  const [selected, setSelected] = useState<"jira" | "azure">("jira");
+  const [selected, setSelected] = useState<"jira" | "azure">("azure");
   const [statusMap, setStatusMap] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(false);
   const [testing, setTesting] = useState(false);
@@ -17,7 +17,7 @@ const ConnectionsPage = () => {
   const [form, setForm] = useState({
     jira: { url: "", token: "" },
     azure: { org: "", project: "", token: "" },
-  });
+  }); 
 
   const currentStatus = useMemo(() => {
     const entry = statusMap[selected];
@@ -54,6 +54,11 @@ const ConnectionsPage = () => {
             token: res.data?.azure?.token || "",
           },
         }));
+        const keys = Object.keys(res.data || {});
+        if (keys.length > 0) {
+          const first = keys[0] as "jira" | "azure";
+          setSelected(first);
+        }
       } else {
         setMessage(res?.message || "Failed to load connection status");
       }
@@ -69,9 +74,9 @@ const ConnectionsPage = () => {
     setTesting(true);
     setMessage(null);
     const payload =
-      selected === "jira"
-        ? { tool: "jira", url: form.jira.url, token: form.jira.token }
-        : { tool: "azure", org: form.azure.org, project: form.azure.project, token: form.azure.token };
+      selected === "azure"
+        ? { tool: "azure", org: form.azure.org, project: form.azure.project, token: form.azure.token }
+        :  { tool: "jira", url: form.jira.url, token: form.jira.token };
     try {
       const res = await connectionsApi.testConnection(payload);
       setMessage(res?.message || "Test completed");
@@ -125,6 +130,19 @@ const ConnectionsPage = () => {
 
       {/* Tool Selector */}
       <div className="flex gap-4 bg-white/60 backdrop-blur-lg p-3 rounded-xl border shadow-sm w-fit">
+       <button
+          onClick={() => setSelected("azure")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition border 
+          ${
+            selected === "azure"
+              ? "border-blue-600 text-blue-600 bg-blue-50"
+              : "border-transparent hover:border-gray-300 hover:bg-gray-100"
+          }`}
+        >
+          <img src={AzureIcon} className="w-5 h-5" />
+          Azure DevOps
+        </button>
+        
         <button
           onClick={() => setSelected("jira")}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition border 
@@ -136,19 +154,6 @@ const ConnectionsPage = () => {
         >
           <img src={JiraIcon} className="w-5 h-5" />
           Jira
-        </button>
-
-        <button
-          onClick={() => setSelected("azure")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition border 
-          ${
-            selected === "azure"
-              ? "border-blue-600 text-blue-600 bg-blue-50"
-              : "border-transparent hover:border-gray-300 hover:bg-gray-100"
-          }`}
-        >
-          <img src={AzureIcon} className="w-5 h-5" />
-          Azure DevOps
         </button>
       </div>
 
