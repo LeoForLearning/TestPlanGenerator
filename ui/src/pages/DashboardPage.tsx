@@ -40,17 +40,26 @@ const DashboardPage = () => {
         </h2>
 
         <div className="flex gap-4 flex-wrap">
-          <button className="px-5 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
+          <a
+            href="/connections"
+            className="px-5 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition"
+          >
             Connect to Jira / Azure
-          </button>
+          </a>
 
-          <button className="px-5 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-black transition">
+          <a
+            href="/upload"
+            className="px-5 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-black transition"
+          >
             Upload Test Case File
-          </button>
+          </a>
 
-          <button className="px-5 py-2 border border-gray-300 text-sm rounded-lg hover:bg-gray-200 transition">
+          <a
+            href="/generate"
+            className="px-5 py-2 border border-gray-300 text-sm rounded-lg hover:bg-gray-200 transition"
+          >
             Generate Test Cases
-          </button>
+          </a>
         </div>
       </section>
 
