@@ -1,8 +1,16 @@
 import json
 from typing import List, Dict, Any
+
 import requests
 
 from app.services.app_store import get_section
+
+try:
+    # Prefer official clients to avoid manual URL handling.
+    from openai import AzureOpenAI, OpenAI
+except Exception:
+    AzureOpenAI = None
+    OpenAI = None
 
 
 def build_prompt(requirement: str, context_chunks: List[Dict[str, Any]], settings: Dict[str, Any]) -> str:
@@ -93,23 +101,21 @@ def _openai_generate(prompt: str, settings: Dict[str, Any]) -> List[Dict[str, An
     api_key = settings.get("apiKey")
     model = settings.get("model") or "gpt-4o"
     temperature = float(settings.get("temperature", 0.7))
+    base_url = (settings.get("baseUrl") or "https://api.openai.com/v1").rstrip("/")
 
     if not api_key:
         raise RuntimeError("OpenAI apiKey is missing in settings.")
+    if not OpenAI:
+        raise RuntimeError("Missing openai package. Install `openai>=1.0.0` to use the OpenAI client.")
 
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "model": model,
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": temperature,
-    }
-    resp = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, timeout=120)
-    resp.raise_for_status()
-    data = resp.json()
-    content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+    # Use the official OpenAI client; base_url can be overridden by payload/settings if needed.
+    client = OpenAI(api_key=api_key, base_url=base_url)
+    response = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=temperature,
+    )
+    content = response.choices[0].message.content
     try:
         parsed = json.loads(content)
         if isinstance(parsed, list):
@@ -138,19 +144,22 @@ def _azure_generate(prompt: str, settings: Dict[str, Any]) -> List[Dict[str, Any
     if not api_key or not endpoint or not deployment:
         raise RuntimeError("Azure OpenAI settings are incomplete (apiKey, endpoint, deployment required).")
 
-    url = f"{endpoint}/openai/deployments/{deployment}/chat/completions?api-version={api_version}"
-    headers = {
-        "api-key": api_key,
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": temperature,
-    }
-    resp = requests.post(url, headers=headers, json=payload, timeout=120)
-    resp.raise_for_status()
-    data = resp.json()
-    content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+    if not AzureOpenAI:
+        raise RuntimeError("Missing openai package. Install `openai>=1.0.0` to use Azure OpenAI client.")
+
+    # Use the official client to avoid hand-built URLs that can return 404s.
+    client = AzureOpenAI(
+        api_version=api_version,
+        azure_endpoint=endpoint,
+        api_key=api_key,
+    )
+    response = client.chat.completions.create(
+        model=deployment,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=temperature,
+    )
+    content = response.choices[0].message.content
+
     try:
         parsed = json.loads(content)
         if isinstance(parsed, list):
@@ -189,9 +198,10 @@ def call_llm(prompt: str, settings: Dict[str, Any]) -> (List[Dict[str, Any]], st
     """
     model = (settings.get("model") or "").lower()
     provider = (settings.get("llmProvider") or "").lower().strip()
+    azure_endpoint = (settings.get("azureEndpoint") or "").strip()
 
-    # Explicit provider overrides model inference
-    if provider == "azure":
+    # Prefer Azure when explicitly requested or when Azure endpoint is provided.
+    if provider == "azure" or (not provider and azure_endpoint):
         return _azure_generate(prompt, settings), "Generated via Azure OpenAI."
 
     if provider == "openai":

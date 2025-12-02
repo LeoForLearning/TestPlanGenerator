@@ -18,7 +18,7 @@ async def generate_tests(payload: GenerateRequest, top_k: int = 5):
     Generate test cases using RAG:
     - fetch ticket details from Jira/Azure using saved connections
     - retrieve relevant chunks from the vector store using ticket + prompt
-    - build a prompt with context and delegate to generator (LLM stub)
+    - build a prompt with context and delegate to generator.
     """
     # Load connection settings
     store = load_store()
