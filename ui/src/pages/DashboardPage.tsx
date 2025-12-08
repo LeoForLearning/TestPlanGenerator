@@ -1,11 +1,14 @@
 import { usePageTitle } from "../hooks/usePageTitle";
+import { usePDFExport } from "../hooks/usePDFExport";
 
 const DashboardPage = () => {
   usePageTitle("Dashboard");
+  const { ref, exportPDF } = usePDFExport();
 
   return (
     <div className="space-y-6">
       {/* Page Title */}
+    <div ref={ref}>
       <div>
         <h1 className="text-2xl font-bold text-gray-800">
           Welcome to TestPlanGenerator 🚀
@@ -35,9 +38,16 @@ const DashboardPage = () => {
 
       {/* Quick Actions */}
       <section className="bg-white/70 backdrop-blur-lg border border-gray-200 rounded-xl p-5 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
-          Quick Actions
-        </h2>
+        <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+          <h2 className="text-lg font-semibold text-gray-800">Quick Actions</h2>
+          <button
+            type="button"
+            onClick={() => exportPDF("dashboard.pdf")}
+            className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition"
+          >
+            Export as PDF
+          </button>
+        </div>
 
         <div className="flex gap-4 flex-wrap">
           <a
@@ -98,6 +108,7 @@ const DashboardPage = () => {
           <li>🔗 Connected to Azure DevOps instance (Today 09:15 AM)</li>
         </ul>
       </section>
+    </div>
     </div>
   );
 };
