@@ -8,3 +8,4 @@ requests
 sentence-transformers
 torch
 python-dotenv
+openai

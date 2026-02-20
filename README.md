@@ -70,9 +70,96 @@ Replace the placeholders with your actual values.
 
 ```bash
 
-python3 main.py
+python3 main.py # for runnung manual
+
+## To Run api 
+uvicorn app.main:app --reload --port 8000
+
 
 ```
 
-## Happy coding ##
+## How to run Frontend app?.
 
+# 🚀 Running the Frontend Application 
+
+Run the following commands one by one: 
+
+```bash
+
+cd src/ui
+
+npm install
+
+npm eun dev
+
+```
+
+## Happy coding 😄 ##
+
+
+## Folder structure for dev understandings. 
+
+TestPlanGenerator/
+│
+├── ui/                           # Frontend (React + Vite + Tailwind)
+│   ├── public/
+│   └── src/
+│       ├── routes/
+│       ├── components/
+│       ├── hooks/
+│       ├── services/             # axios api calls
+│       └── pages/             # modules: dashboard, upload, settings...
+│
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   │
+│   │   ├── main.py               # FastAPI app entry point
+│   │   │
+│   │   ├── api/                  # Routing layer only (no business logic)
+│   │   │   ├── __init__.py
+│   │   │   ├── generate.py
+│   │   │   ├── upload.py
+│   │   │   ├── rag.py
+│   │   │   ├── settings.py
+│   │   │   ├── dashboard.py
+│   │   │   └── connections.py
+│   │   │
+│   │   ├── models/               # Pydantic schemas + validation rules
+│   │   │   ├── __init__.py
+│   │   │   ├── response.py
+│   │   │   ├── test_case.py
+│   │   │   └── settings.py
+│   │   │
+│   │   ├── services/             # Business helpers not tied to RAG
+│   │   │   ├── __init__.py
+│   │   │   ├── json_store.py     # settings storage
+│   │   │   ├── ado_client.py     # Azure DevOps client wrapper
+│   │   │   └── jira_client.py    # Jira wrapper
+│   │   │
+│   │   ├── rag/                  # AI logic (core intelligence)
+│   │   │   ├── __init__.py
+│   │   │   ├── ingest.py         # XLS → cleaned dataset
+│   │   │   ├── embedder.py       # LLM / OpenAI embedding calls
+│   │   │   ├── vector_store.py   # ChromaDB interactions
+│   │   │   ├── retriever.py      # Retrieve context for queries
+│   │   │   └── generator.py      # RAG → Test generation
+│   │   │
+│   │   ├── workers/              # Background tasks (optional future Celery)
+│   │   │   ├── __init__.py
+│   │   │   └── tasks.py
+│   │   │
+│   │   └── core/                 # Security + config + constants
+│   │       ├── __init__.py
+│   │       ├── config.py
+│   │       └── env.py
+│   │
+│   ├── requirements.txt
+│   └── README.md
+│
+├── data/                         # Local uploaded files (user input)
+│   └── uploaded/
+│
+├── rag_pipeline/ (optional future microservice)
+│
+└── docker-compose.yml (future)
